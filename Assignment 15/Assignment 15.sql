@@ -8,17 +8,43 @@ SELECT * FROM customer_transactions;
 SELECT COUNT(DISTINCT node_id) AS unique_nodes
 FROM customer_nodes;
 
+/*output
+unique_nodes
+------------
+5*/
+
+
 --A(b) What is the number of nodes per region? 
 SELECT region_id,
        COUNT(DISTINCT node_id) AS node_count
 FROM customer_nodes
 GROUP BY region_id;
 
+/*output
+region_id node_count
+--------- -----------
+1         5
+2         5
+3         5
+4         5
+5         5 */
+
+
 --A(c) How many customers are allocated to each region?
 SELECT region_id,
       COUNT(DISTINCT customer_id) AS customer_count
 FROM customer_nodes
 GROUP BY region_id;
+
+/*output
+region_id customer_count
+--------- --------------
+1         110
+2         105
+3         102
+4         95
+5         88*/
+
 
 --A(d) How many days on average are customers reallocated to a different node?
 WITH node_duration AS
@@ -36,6 +62,11 @@ WITH node_duration AS
 SELECT
     AVG(days_on_node) AS avg_days
 FROM node_duration;
+
+/*output 
+avg_days
+-----------
+14*/
 
 --A(e) What is the median, 80th and 95th percentile for this same reallocation days metric for each region?
 WITH node_duration AS
@@ -67,6 +98,19 @@ SELECT DISTINCT
 FROM node_duration
 ORDER BY region_name;
 
+/*output 
+
+region_name                                        median_days            percentile_80_days     percentile_95_days
+-------------------------------------------------- ---------------------- ---------------------- ----------------------
+Africa                                             15                     24                     28
+America                                            15                     23                     28
+Asia                                               15                     23                     28
+Australia                                          15                     23                     28
+Europe                                             15                     24                     28 
+*/
+
+
+
 --B Customer Transactions (a) What is the unique count and total amount for each transaction type?
 
 SELECT
@@ -75,6 +119,15 @@ SELECT
     SUM(txn_amount) AS total_amount
 FROM customer_transactions
 GROUP BY txn_type;
+
+/*output 
+txn_type                                           transaction_count total_amount
+-------------------------------------------------- ----------------- ------------
+purchase                                           1617              806537
+withdrawal                                         1580              793003
+deposit                                            2671              1359168
+*/
+
 
 --B(b) What is the average total historical deposit counts and amounts for all customers?
 
@@ -93,6 +146,13 @@ SELECT
     AVG(deposit_count) AS avg_deposit_count,
     AVG(total_deposit_amount) AS avg_deposit_amount
 FROM customer_deposits;
+
+/*output
+avg_deposit_count avg_deposit_amount
+----------------- ------------------
+5                 2718
+*/
+
 
 --B(c) For each month - how many Data Bank customers make more than 1 deposit and either 1 purchase or 1 withdrawal in a single month?
 WITH monthly_transactions AS
@@ -119,3 +179,12 @@ WHERE deposit_count > 1
 AND (purchase_count >= 1 OR withdrawal_count >= 1)
 GROUP BY month_no
 ORDER BY month_no;
+
+/*output
+month_no    customer_count
+----------- --------------
+1           168
+2           181
+3           192
+4           70
+/*
