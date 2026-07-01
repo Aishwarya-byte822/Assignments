@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "Assignment 1/Code.ipynb"
+      - "/Assignment 1/Code.ipynb"
 
 jobs:
   deploy:
@@ -37,7 +37,7 @@ jobs:
       - name: Upload Notebook
         run: |
           databricks workspace import \
-          Assignment 1/Code.ipynb \
+          /Assignment 1/Code.ipynb \
           /Shared/advance-spark \
           --language PYTHON \
           --format JUPYTER \
